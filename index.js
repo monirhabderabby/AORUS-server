@@ -35,6 +35,7 @@ async function run(){
         await client.connect();
         const userCollection = client.db("AORUS_WORLD").collection("users");
         const productCollection = client.db("AORUS_WORLD").collection("products");
+        const orderCollection = client.db("AORUS_WORLD").collection("orders");
         console.log("DB Connected");
 
         //Verify Admin
@@ -72,14 +73,34 @@ async function run(){
             res.send({admin: isAdmin});
         })
 
+        //Get a product using id
+        app.get('/product/:id', verifyJWT, async (req, res)=> {
+            const id = req.params.id;
+            const filter = {_id: ObjectId(id)}
+            const result = await productCollection.findOne(filter);
+            res.send(result)
+        })
+
+
+
         //ALL POST API
+        //insert a product from admin
         app.post('/product',verifyJWT, async (req, res)=> {
             const newProduct = req.body;
             console.log(newProduct);
             const result = await productCollection.insertOne(newProduct);
             res.send(result)
         })
+
+        //new order 
+        app.post('/order', verifyJWT, async(req, res)=> {
+            const order = req.body;
+            const result = await orderCollection.insertOne(order);
+            res.send(result);
+        })
         
+
+
 
         //ALL PUT API
         app.put('/user',  async (req, res)=> {
