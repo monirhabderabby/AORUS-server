@@ -60,7 +60,7 @@ async function run(){
 
         //get all product data
         app.get("/parts", async (req, res)=> {
-            const result = await productCollection.find({}).toArray();
+            const result = await (await productCollection.find({}).toArray()).reverse();
             res.send(result)
         })
 
@@ -73,6 +73,12 @@ async function run(){
         })
 
         //ALL POST API
+        app.post('/product',verifyJWT, async (req, res)=> {
+            const newProduct = req.body;
+            console.log(newProduct);
+            const result = await productCollection.insertOne(newProduct);
+            res.send(result)
+        })
         
 
         //ALL PUT API
