@@ -59,11 +59,18 @@ async function run(){
         })
 
         //get all product data
-        app.get("/parts", verifyJWT, async (req, res)=> {
+        app.get("/parts", async (req, res)=> {
             const result = await productCollection.find({}).toArray();
             res.send(result)
         })
 
+        //Check Admin or not
+        app.get('/user/checkAdmin/:email', async (req, res)=> {
+            const email = req.params.email;
+            const user = await userCollection.findOne({email: email});
+            const isAdmin = user.role === "admin"
+            res.send({admin: isAdmin});
+        })
 
         //ALL POST API
         
