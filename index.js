@@ -37,6 +37,19 @@ async function run(){
         const productCollection = client.db("AORUS_WORLD").collection("products");
         console.log("DB Connected");
 
+        //Verify Admin
+        const verifyAdmin = async(req, res, next) => {
+            const requester = req.decoded.email;
+            const requsterAccount = await userCollection.findOne({email: requester});
+            console.log(requsterAccount);
+            if(requsterAccount.role === "admin"){
+                next();
+            }
+            else{
+                res.status(403).send({message: "forbidden Access"})
+            }
+        }
+
         //ALL GET API
 
         //get all users information with this API
@@ -69,6 +82,17 @@ async function run(){
                 expiresIn: "1d"
             })
             res.send({result, token})
+        })
+
+        //API for make admin
+        app.put('/user/admin/:email',verifyJWT,verifyAdmin, async (req, res)=> {
+            const email = req.params.email;
+            const filter = {email: email};
+            const updateDoc = {
+                $set: {role: "admin"}
+            }
+            const result = await userCollection.updateOne(filter, updateDoc);
+            res.send(result)
         })
 
         //ALL DELETE API
