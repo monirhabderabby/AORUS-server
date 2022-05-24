@@ -163,6 +163,21 @@ async function run(){
             res.send(result)
         })
 
+        //Update user payment
+        app.put('/order/paid/:id', async (req, res)=> {
+            const id = req.params.id;
+            const transactionId = req.body;
+            const filter = {_id: ObjectId(id)}
+            const updateDoc = {
+                $set: {
+                    paid: true,
+                    transactionId: transactionId,
+                }
+            }
+            const result = await orderCollection.updateOne(filter, updateDoc);
+            res.send(result)
+        })
+
         //ALL DELETE API
     }
     finally{
