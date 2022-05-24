@@ -81,6 +81,13 @@ async function run(){
             res.send(result)
         })
 
+        //Get all products by user
+        app.get('/orders/:email',verifyJWT, async (req, res)=> {
+            const email = req.params.email;
+            const filter = {email: email}
+            const result = await orderCollection.find(filter).toArray();
+            res.send(result);
+        })
 
 
         //ALL POST API
@@ -93,8 +100,9 @@ async function run(){
         })
 
         //new order 
-        app.post('/order', verifyJWT, async(req, res)=> {
+        app.post('/order',verifyJWT, async(req, res)=> {
             const order = req.body;
+            console.log(order);
             const result = await orderCollection.insertOne(order);
             res.send(result);
         })
