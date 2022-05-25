@@ -127,7 +127,7 @@ async function run(){
         app.get('/orders/:email',verifyJWT, async (req, res)=> {
             const email = req.params.email;
             const filter = {email: email}
-            const result = await orderCollection.find(filter).toArray();
+            const result = await (await orderCollection.find(filter).toArray()).reverse();
             res.send(result);
         })
 
@@ -142,7 +142,6 @@ async function run(){
         //insert a product from admin
         app.post('/product',verifyJWT, async (req, res)=> {
             const newProduct = req.body;
-            console.log(newProduct);
             const result = await productCollection.insertOne(newProduct);
             res.send(result)
         })
