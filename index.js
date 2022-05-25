@@ -37,6 +37,7 @@ async function run(){
         const userCollection = client.db("AORUS_WORLD").collection("users");
         const productCollection = client.db("AORUS_WORLD").collection("products");
         const orderCollection = client.db("AORUS_WORLD").collection("orders");
+        const reviewCollection = client.db("AORUS_WORLD").collection("reviews");
         console.log("DB Connected");
 
         //Verify Admin
@@ -130,6 +131,12 @@ async function run(){
             res.send(result);
         })
 
+        //get all review 
+        app.get('/review',verifyJWT, async (req, res)=> {
+            const result = await (await reviewCollection.find().toArray()).reverse()
+            res.send(result)
+        })
+
 
         //ALL POST API
         //insert a product from admin
@@ -143,8 +150,14 @@ async function run(){
         //new order 
         app.post('/order',verifyJWT, async(req, res)=> {
             const order = req.body;
-            console.log(order);
             const result = await orderCollection.insertOne(order);
+            res.send(result);
+        })
+
+        //make a api for post review on DB
+        app.post('/review', verifyJWT, async (req, res)=> {
+            const review = req.body;
+            const result = await reviewCollection.insertOne(review);
             res.send(result);
         })
         
