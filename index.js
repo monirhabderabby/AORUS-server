@@ -91,6 +91,13 @@ async function run(){
             res.send(result)
         })
 
+        //get all orders for admin
+        app.get('/allorders', verifyJWT,verifyAdmin, async (req, res)=> {
+            const query = {};
+            const result = await orderCollection.find(query).toArray();
+            res.send(result)
+        })
+
         //Check Admin or not
         app.get('/user/checkAdmin/:email', async (req, res)=> {
             const email = req.params.email;
@@ -147,14 +154,15 @@ async function run(){
         //ALL PUT API
         app.put('/user',  async (req, res)=> {
             const user = req.body;
-            const filter = {email: user.email};
+            const email = user?.email;
+            const filter = {email: email};
             const options = {upsert: true};
             const updateDoc = {
                 $set: user,
             }
 
             const result = await userCollection.updateOne(filter, updateDoc, options);
-            const token = jwt.sign({email: user.email}, process.env.ACCESS_TOKEN_SECRET_KEY, {
+            const token = jwt.sign({email: email}, process.env.ACCESS_TOKEN_SECRET_KEY, {
                 expiresIn: "1d"
             })
             res.send({result, token})
