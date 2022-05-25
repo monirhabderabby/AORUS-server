@@ -77,6 +77,14 @@ async function run(){
             res.send(result)
         })
 
+        //get a single user by email
+        app.get('/user/:email', async(req, res)=>{
+            const email = req.params.email;
+            const filter = {email: email};
+            const result = await userCollection.findOne(filter);
+            res.send(result)
+        } )
+
         //get all product data
         app.get("/parts", async (req, res)=> {
             const result = await (await productCollection.find({}).toArray()).reverse();
@@ -176,6 +184,24 @@ async function run(){
             }
             const result = await orderCollection.updateOne(filter, updateDoc);
             res.send(result)
+        })
+
+        //Update user Profile
+        app.put('/profile/:email', async (req, res)=> {
+            const email = req.params.email;
+            const profile = req.body;
+            const filter = {email: email};
+            const updateDoc = {
+                $set: {
+                    birthDay : profile.age,
+                    institutte: profile.institute,
+                    parmanentAddress: profile.parmanentAddress,
+                    presentAddress: profile.presentAddress,
+                    img: profile.img
+                },
+            };
+            const result = await userCollection.updateOne(filter, updateDoc);
+            res.send(result);
         })
 
         //ALL DELETE API
